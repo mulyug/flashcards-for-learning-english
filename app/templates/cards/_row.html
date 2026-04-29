@@ -1,0 +1,20 @@
+<tr class="border-t border-slate-100 hover:bg-slate-50/40 transition">
+  <td class="px-4 py-3 font-medium text-ink">{{ card.english }}</td>
+  <td class="px-4 py-3 text-slate-600">{{ card.translation }}</td>
+  <td class="px-4 py-3 text-slate-500 text-xs italic max-w-xs truncate">{{ card.example or '' }}</td>
+  <td class="px-4 py-3 text-right text-xs text-slate-400 whitespace-nowrap">
+    {{ card.due_at.strftime('%Y-%m-%d') }}
+  </td>
+  <td class="px-4 py-3 text-right whitespace-nowrap">
+    <a href="/cards/{{ card.id }}/edit"
+       class="text-brand hover:underline text-sm font-medium mr-3">Edit</a>
+    <button type="button"
+            hx-delete="/cards/{{ card.id }}"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+            hx-confirm="Delete this card? This cannot be undone."
+            class="text-red-600 hover:underline text-sm font-medium">
+      Delete
+    </button>
+  </td>
+</tr>

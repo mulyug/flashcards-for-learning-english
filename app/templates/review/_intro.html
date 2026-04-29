@@ -1,0 +1,22 @@
+{% if due_count == 0 %}
+  <div class="py-10">
+    <svg class="w-14 h-14 mx-auto text-easy mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path stroke-linecap="round" stroke-linejoin="round" d="m8 12 3 3 5-6"></path>
+    </svg>
+    <h2 class="text-2xl font-semibold mb-2">All caught up</h2>
+    <p class="text-slate-500 mb-6">No cards are due right now. Add more or come back later.</p>
+    <a href="/cards" class="text-brand font-medium hover:underline">Manage cards →</a>
+  </div>
+{% else %}
+  <div class="py-10">
+    <div class="text-7xl font-bold text-brand leading-none mb-2">{{ due_count }}</div>
+    <p class="text-slate-500 mb-8">card{{ '' if due_count == 1 else 's' }} due to review</p>
+    <button hx-get="/review/next"
+            hx-target="#review-area"
+            hx-swap="innerHTML"
+            class="px-8 py-3 rounded-xl bg-brand hover:bg-brand-dark text-white font-semibold transition card-shadow">
+      Start review
+    </button>
+  </div>
+{% endif %}

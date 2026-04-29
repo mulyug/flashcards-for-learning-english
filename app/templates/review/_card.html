@@ -1,0 +1,50 @@
+<div data-review-card class="py-2">
+  <div class="text-xs uppercase tracking-wider text-slate-400 mb-8">
+    {{ remaining }} card{{ '' if remaining == 1 else 's' }} remaining
+  </div>
+
+  <div class="text-5xl md:text-6xl font-bold text-ink mb-6 break-words leading-tight">
+    {{ card.english }}
+  </div>
+
+  {% if card.example %}
+  <div class="text-slate-500 italic text-base mb-10 max-w-md mx-auto">
+    "{{ card.example }}"
+  </div>
+  {% else %}
+  <div class="mb-10"></div>
+  {% endif %}
+
+  <div data-translation class="hidden mb-8">
+    <div class="text-3xl font-medium text-brand">{{ card.translation }}</div>
+  </div>
+
+  <div data-grade class="hidden gap-3 justify-center sm:flex-row flex-col">
+    <button hx-post="/review/{{ card.id }}/grade"
+            hx-vals='{"grade":"hard"}'
+            hx-target="#review-area"
+            hx-swap="innerHTML"
+            class="grade-btn flex-1 px-6 py-4 rounded-xl bg-hard hover:brightness-110 text-white font-semibold card-shadow">
+      Hard
+    </button>
+    <button hx-post="/review/{{ card.id }}/grade"
+            hx-vals='{"grade":"medium"}'
+            hx-target="#review-area"
+            hx-swap="innerHTML"
+            class="grade-btn flex-1 px-6 py-4 rounded-xl bg-medium hover:brightness-110 text-white font-semibold card-shadow">
+      Medium
+    </button>
+    <button hx-post="/review/{{ card.id }}/grade"
+            hx-vals='{"grade":"easy"}'
+            hx-target="#review-area"
+            hx-swap="innerHTML"
+            class="grade-btn flex-1 px-6 py-4 rounded-xl bg-easy hover:brightness-110 text-white font-semibold card-shadow">
+      Easy
+    </button>
+  </div>
+
+  <button data-reveal type="button"
+          class="px-8 py-3 rounded-xl bg-brand-light text-brand-dark font-semibold hover:brightness-95 transition">
+    Show translation
+  </button>
+</div>

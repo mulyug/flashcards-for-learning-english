@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Cards · Flashcards{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight">Your cards</h1>
+    <p class="text-sm text-slate-500">{{ cards|length }} card{{ '' if cards|length == 1 else 's' }}</p>
+  </div>
+  <a href="/cards/new"
+     class="px-4 py-2 rounded-lg bg-brand text-white font-medium hover:bg-brand-dark transition card-shadow">
+    + New card
+  </a>
+</div>
+
+<form method="get" action="/cards" class="mb-4">
+  <input name="q" type="search" value="{{ q }}" placeholder="Search cards…"
+         class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition">
+</form>
+
+<div class="bg-white rounded-2xl card-shadow overflow-hidden">
+  {% if cards %}
+  <table class="w-full text-sm">
+    <thead class="text-xs uppercase tracking-wide text-slate-500 bg-slate-50/70">
+      <tr>
+        <th class="px-4 py-3 text-left font-medium">English</th>
+        <th class="px-4 py-3 text-left font-medium">Translation</th>
+        <th class="px-4 py-3 text-left font-medium">Example</th>
+        <th class="px-4 py-3 text-right font-medium">Due</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for card in cards %}{% include "cards/_row.html" %}{% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="px-6 py-16 text-center">
+    {% if q %}
+      <p class="text-slate-500 mb-4">No cards match "<strong>{{ q }}</strong>".</p>
+      <a href="/cards" class="text-brand font-medium hover:underline">Clear search</a>
+    {% else %}
+      <p class="text-slate-500 mb-4">No cards yet. Build your deck.</p>
+      <a href="/cards/new" class="text-brand font-medium hover:underline">Add your first card →</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

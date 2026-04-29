@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Flashcards{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#7C3AED', dark: '#6D28D9', light: '#EDE9FE' },
+            hard: '#EF4444',
+            medium: '#F59E0B',
+            easy: '#10B981',
+            ink: '#1E1B2E',
+          },
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: linear-gradient(180deg, #FAFAF9 0%, #F5F3FF 100%); }
+    .card-shadow { box-shadow: 0 1px 3px rgba(30,27,46,.04), 0 8px 24px rgba(124,58,237,.08); }
+    .grade-btn { transition: transform .12s ease, box-shadow .12s ease; }
+    .grade-btn:hover { transform: translateY(-2px); }
+    .grade-btn:active { transform: translateY(0); }
+  </style>
+</head>
+<body class="font-sans text-ink antialiased min-h-screen">
+  {% block nav %}
+    {% if current_user %}
+    <nav class="bg-white/70 backdrop-blur border-b border-slate-200">
+      <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="/cards" class="flex items-center gap-2 font-semibold text-lg">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand"></span>
+          Flashcards
+        </a>
+        <div class="flex items-center gap-1">
+          <a href="/cards"
+             class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-brand-light hover:text-brand-dark transition">
+            Cards
+          </a>
+          <a href="/review"
+             class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-brand-light hover:text-brand-dark transition">
+            Review
+          </a>
+          <form method="post" action="/logout" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit"
+                    class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-900 transition">
+              Log out
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    {% endif %}
+  {% endblock %}
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    (function () {
+      var token = {{ (csrf_token if csrf_token is defined else '') | tojson }};
+      if (!token) {
+        var m = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
+        token = m ? decodeURIComponent(m[1]) : '';
+      }
+      if (token) {
+        document.addEventListener('htmx:configRequest', function (e) {
+          e.detail.headers['X-CSRF-Token'] = token;
+        });
+      }
+
+      document.body.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-reveal]');
+        if (!btn) return;
+        var card = btn.closest('[data-review-card]');
+        if (!card) return;
+        var trans = card.querySelector('[data-translation]');
+        var grade = card.querySelector('[data-grade]');
+        if (trans) trans.classList.remove('hidden');
+        if (grade) {
+          grade.classList.remove('hidden');
+          grade.classList.add('flex');
+        }
+        btn.classList.add('hidden');
+      });
+    })();
+  </script>
+</body>
+</html>
