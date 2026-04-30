@@ -3,8 +3,36 @@
 {% block nav %}{% endblock %}
 
 {% block content %}
-<div class="min-h-[80vh] flex items-center justify-center">
-  <div class="w-full max-w-sm bg-white rounded-2xl card-shadow p-8">
+<div class="min-h-[80vh] grid md:grid-cols-2 gap-10 items-center">
+  <section class="max-w-md md:justify-self-end">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="w-10 h-10 rounded-xl bg-brand grid place-items-center text-white font-bold text-lg">F</span>
+      <h2 class="text-2xl font-semibold leading-tight">Learn English with flashcards</h2>
+    </div>
+
+    <p class="text-slate-600 leading-relaxed mb-5">
+      A simple flashcard app that helps you grow your English vocabulary with
+      spaced repetition. Add the words you want to learn, then review them daily
+      in short sessions.
+    </p>
+
+    <ul class="space-y-3 text-sm text-slate-600">
+      <li class="flex gap-3">
+        <span class="mt-1 w-5 h-5 rounded-full bg-brand-light text-brand-dark grid place-items-center text-xs font-bold flex-none">1</span>
+        <span><span class="font-medium text-slate-800">Build your own deck.</span> Add the words and phrases you actually want to remember — together with their translation.</span>
+      </li>
+      <li class="flex gap-3">
+        <span class="mt-1 w-5 h-5 rounded-full bg-brand-light text-brand-dark grid place-items-center text-xs font-bold flex-none">2</span>
+        <span><span class="font-medium text-slate-800">Review every day.</span> Rate each card as Hard, Medium, or Easy and let the app decide when to show it again.</span>
+      </li>
+      <li class="flex gap-3">
+        <span class="mt-1 w-5 h-5 rounded-full bg-brand-light text-brand-dark grid place-items-center text-xs font-bold flex-none">3</span>
+        <span><span class="font-medium text-slate-800">Focus on what's hard.</span> Tricky words come back sooner, the ones you know stay out of your way.</span>
+      </li>
+    </ul>
+  </section>
+
+  <div class="w-full max-w-sm md:justify-self-start bg-white rounded-2xl card-shadow p-8">
     <div class="flex items-center gap-3 mb-6">
       <span class="w-9 h-9 rounded-xl bg-brand grid place-items-center text-white font-bold">F</span>
       <div>
