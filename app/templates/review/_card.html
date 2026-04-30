@@ -1,25 +1,36 @@
-<div data-review-card class="py-2">
-  <div class="text-xs uppercase tracking-wider text-slate-400 mb-8">
+<div data-review-card>
+  <div class="text-xs uppercase tracking-wider text-slate-400 mb-4 text-center">
     {{ remaining }} card{{ '' if remaining == 1 else 's' }} remaining
   </div>
 
-  <div class="text-5xl md:text-6xl font-bold text-ink mb-6 break-words leading-tight">
-    {{ card.english }}
+  <div data-flip class="flip-scene cursor-pointer select-none mb-6">
+    <div class="flip-card">
+      <div class="flip-face bg-white rounded-2xl card-shadow p-8 min-h-[20rem] flex flex-col items-center justify-center text-center">
+        <div class="text-5xl md:text-6xl font-bold text-ink mb-6 break-words leading-tight">
+          {{ card.english }}
+        </div>
+        {% if card.example %}
+        <div class="text-slate-500 italic text-base max-w-md">
+          "{{ card.example }}"
+        </div>
+        {% endif %}
+        <div class="mt-6 text-xs uppercase tracking-wider text-slate-300">
+          Tap to flip
+        </div>
+      </div>
+
+      <div class="flip-face flip-face-back bg-white rounded-2xl card-shadow p-8 min-h-[20rem] flex flex-col items-center justify-center text-center">
+        <div class="text-4xl md:text-5xl font-medium text-brand break-words leading-tight">
+          {{ card.translation }}
+        </div>
+        <div class="mt-6 text-xs uppercase tracking-wider text-slate-300">
+          Tap to flip back
+        </div>
+      </div>
+    </div>
   </div>
 
-  {% if card.example %}
-  <div class="text-slate-500 italic text-base mb-10 max-w-md mx-auto">
-    "{{ card.example }}"
-  </div>
-  {% else %}
-  <div class="mb-10"></div>
-  {% endif %}
-
-  <div data-translation class="hidden mb-8">
-    <div class="text-3xl font-medium text-brand">{{ card.translation }}</div>
-  </div>
-
-  <div data-grade class="hidden gap-3 justify-center sm:flex-row flex-col">
+  <div data-no-flip class="flex gap-3 sm:flex-row flex-col">
     <button hx-post="/review/{{ card.id }}/grade"
             hx-vals='{"grade":"hard"}'
             hx-target="#review-area"
@@ -42,9 +53,4 @@
       Easy
     </button>
   </div>
-
-  <button data-reveal type="button"
-          class="px-8 py-3 rounded-xl bg-brand-light text-brand-dark font-semibold hover:brightness-95 transition">
-    Show translation
-  </button>
 </div>

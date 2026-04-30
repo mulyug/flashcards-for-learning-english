@@ -28,6 +28,11 @@
     .grade-btn { transition: transform .12s ease, box-shadow .12s ease; }
     .grade-btn:hover { transform: translateY(-2px); }
     .grade-btn:active { transform: translateY(0); }
+    .flip-scene { perspective: 1200px; }
+    .flip-card { position: relative; width: 100%; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.4,.2,.2,1); }
+    .flip-card.is-flipped { transform: rotateY(180deg); }
+    .flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .flip-face-back { position: absolute; inset: 0; transform: rotateY(180deg); }
   </style>
 </head>
 <body class="font-sans text-ink antialiased min-h-screen flex flex-col">
@@ -100,18 +105,11 @@
       }
 
       document.body.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-reveal]');
-        if (!btn) return;
-        var card = btn.closest('[data-review-card]');
-        if (!card) return;
-        var trans = card.querySelector('[data-translation]');
-        var grade = card.querySelector('[data-grade]');
-        if (trans) trans.classList.remove('hidden');
-        if (grade) {
-          grade.classList.remove('hidden');
-          grade.classList.add('flex');
-        }
-        btn.classList.add('hidden');
+        var flip = e.target.closest('[data-flip]');
+        if (!flip) return;
+        if (e.target.closest('[data-no-flip]')) return;
+        var card = flip.querySelector('.flip-card');
+        if (card) card.classList.toggle('is-flipped');
       });
     })();
   </script>
