@@ -1,4 +1,9 @@
-{$DOMAIN} {
+{
+    http_port 8080
+    https_port 8443
+}
+
+{$DOMAIN}:8443 {
     encode gzip
 
     reverse_proxy app:8000
