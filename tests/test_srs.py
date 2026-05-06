@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from app.srs import DEFAULT_EASE, MIN_EASE, Grade, apply_grade
 
-NOW = datetime(2026, 4, 28, 12, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 4, 28, 12, 0, tzinfo=UTC)
 
 
 def test_first_review_easy_sets_interval_one_and_increases_ease():

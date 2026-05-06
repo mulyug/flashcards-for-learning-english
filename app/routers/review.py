@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
@@ -39,7 +39,7 @@ def review_index(
     user: User = Depends(require_user),
     csrf_token: str = Depends(ensure_csrf_token),  # noqa: ARG001
 ):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return render(
         request,
         "review/index.html",
@@ -55,7 +55,7 @@ def next_card(
     user: User = Depends(require_user),
     csrf_token: str = Depends(ensure_csrf_token),  # noqa: ARG001
 ):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     card = _next_due(db, user, now)
     if card is None:
         return render(request, "review/_done.html", {}, user=user)
@@ -85,7 +85,7 @@ async def grade_card(
     if card is None or card.user_id != user.id:
         raise HTTPException(status_code=404, detail="Card not found")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     state = apply_grade(
         grade_enum,
         repetitions=card.repetitions,

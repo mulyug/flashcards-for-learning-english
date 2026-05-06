@@ -2,7 +2,7 @@
 
 A single-user web app for learning English vocabulary with spaced repetition
 (SM-2). FastAPI + Jinja + HTMX + SQLite, packaged with Docker and fronted by
-Caddy for automatic HTTPS via Let's Encrypt.
+Caddy for automatic HTTPS via Let's Encrypt (DNS challenge through Cloudflare).
 
 ## Features
 
@@ -24,7 +24,7 @@ Caddy for automatic HTTPS via Let's Encrypt.
 | DB       | SQLite + SQLAlchemy 2 + Alembic       |
 | Auth     | Argon2 + signed cookie (itsdangerous) |
 | Limits   | slowapi (in-memory)                   |
-| HTTPS    | Caddy 2 (auto Let's Encrypt)          |
+| HTTPS    | Caddy 2 + Cloudflare DNS challenge    |
 | Runtime  | Docker + docker-compose               |
 
 ## Project layout
@@ -47,7 +47,8 @@ app/                 FastAPI application
 alembic/             Migrations
 scripts/
   create_user.py     CLI to create the single owner account
-caddy/Caddyfile      Reverse proxy + auto HTTPS
+caddy/Caddyfile      Reverse proxy + HTTPS via Cloudflare DNS challenge
+caddy/Dockerfile     Caddy build with cloudflare-dns plugin
 Dockerfile
 docker-compose.yml
 tests/test_srs.py    Unit tests for SM-2
@@ -84,36 +85,58 @@ Run tests:
 
 ## Deploy with Docker (production)
 
-1. Point your domain at the server (DNS A record).
+### Prerequisites
 
-2. On the server, clone the repo and create `.env`:
+- A domain with DNS managed by **Cloudflare** (free plan is enough)
+- DNS A record pointing to your server's IP
+- A Cloudflare API token with **Edit zone DNS** permission for your domain
+
+### Steps
+
+1. Add your domain to Cloudflare and point its A record at the server IP.
+   Set **Proxy status** to **DNS only** (grey cloud).
+
+2. Create a Cloudflare API token:
+   - **My Profile → API Tokens → Create Token**
+   - Use the **Edit zone DNS** template
+   - Set **Zone Resources** → your domain
+   - Copy the token (shown only once)
+
+3. On the server, clone the repo and create `.env`:
 
    ```bash
-   cp .env.example .env
-   # generate a strong secret
-   python3 -c 'import secrets;print("SECRET_KEY="+secrets.token_hex(32))' >> .env
-   # edit .env: set DOMAIN to your real domain, SECRET_KEY to the value above
-   $EDITOR .env
+   cat > .env <<EOF
+   SECRET_KEY=$(python3 -c 'import secrets;print(secrets.token_hex(32))')
+   DATABASE_URL=sqlite:////data/app.db
+   COOKIE_SECURE=true
+   DOMAIN=your-domain.com
+   CLOUDFLARE_API_TOKEN=your_cloudflare_token
+   EOF
    ```
 
-3. Open ports 80 and 443 in your firewall.
-
-4. Build and start:
+4. Open port **8443** in your firewall:
 
    ```bash
+   ufw allow 8443
+   ```
+
+5. Create the data directory and build:
+
+   ```bash
+   mkdir -p data
    docker compose up -d --build
    ```
 
-   Caddy fetches a Let's Encrypt certificate on first boot — give it a
-   minute. Logs: `docker compose logs -f caddy`.
+   Caddy obtains a Let's Encrypt certificate via Cloudflare DNS challenge on
+   first boot (no ports 80/443 needed). Logs: `docker compose logs -f caddy`.
 
-5. Create the single user (one-time):
+6. Create the single user (one-time):
 
    ```bash
    docker compose run --rm app python -m scripts.create_user
    ```
 
-6. Visit `https://your-domain.com` and sign in.
+7. Visit `https://your-domain.com:8443` and sign in.
 
 ### Backup
 
@@ -145,6 +168,7 @@ The entire database is one file: `./data/app.db`. Back it up with `cp` or
 | `SECRET_KEY`            | required                 | 32+ byte hex; signs session cookie |
 | `DATABASE_URL`          | `sqlite:////data/app.db` | SQLAlchemy URL                     |
 | `DOMAIN`                | `localhost`              | Used by Caddy for cert issuance    |
+| `CLOUDFLARE_API_TOKEN`  | required in production   | API token with Edit zone DNS       |
 | `COOKIE_SECURE`         | `true`                   | `false` only for local HTTP dev    |
 | `SESSION_MAX_AGE_DAYS`  | `7`                      |                                    |
 | `LOGIN_MAX_ATTEMPTS`    | `5`                      |                                    |

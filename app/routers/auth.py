@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends, Form, Request, Response
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 
@@ -43,7 +43,7 @@ async def login(
     db: Session = Depends(get_db),
     _csrf: None = Depends(require_csrf),
 ):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     user = db.query(User).filter(User.username == username).first()
 
     if user and user.locked_until is not None:
@@ -80,7 +80,7 @@ async def logout(_csrf: None = Depends(require_csrf)):
 
 def _ensure_aware(dt: datetime) -> datetime:
     if dt.tzinfo is None:
-        return dt.replace(tzinfo=timezone.utc)
+        return dt.replace(tzinfo=UTC)
     return dt
 
 

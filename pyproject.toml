@@ -4,6 +4,10 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "W"]
+ignore = [
+    "B008",   # FastAPI uses Depends() in function signatures by design
+    "UP042",  # StrEnum not available as drop-in for str+Enum in all contexts
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
