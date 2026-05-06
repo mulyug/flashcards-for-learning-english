@@ -1,4 +1,8 @@
-{$DOMAIN} {
+{$DOMAIN}:8443 {
+    tls {
+        dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    }
+
     encode gzip
 
     reverse_proxy app:8000
